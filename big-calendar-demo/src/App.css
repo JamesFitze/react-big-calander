@@ -1,38 +1,96 @@
-.App {
-  text-align: center;
+body {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f8f8;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1, h2, h3 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700; 
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+p, button, input {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container {
+  height: 80vh;
+  padding: 20px;
+}
+
+.add-event-button {
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.calendar {
+  height: 100%;
+  margin: 20px;
+}
+
+.ReactModal__Overlay {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+.ReactModal__Content {
+  position: relative;
+  width: 400px;
+  max-width: 90%;
+  padding: 30px;
+  background: white;
+  border-radius: 10px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.modal-button {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.update-button {
+  background-color: #4CAF50;
+  color: white;
+  margin-right: 10px;
+}
+
+.delete-button, .cancel-button {
+  background-color: #f44336;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.rbc-toolbar .rbc-toolbar-label {
+  font-size: 48px;
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.color-picker {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 15px;
+  border: none;
+  cursor: pointer;
 }
