@@ -1,7 +1,6 @@
 To-do list
 
-MENU BUTTON THAT EXTENDS TO THE CREATE TASK BUTTON / CHECKBOX ITEMS
-CREATE TASK BUTTON WINDOW WITH TIME AND DETAILS
-CHECKBOXES THAT SHOW/HIDE CANADIAN HOLIDAYS
-BASIC FUNCTIONALITY TO THE CALENDAR
-STYLING SECTION
+- Add Canadian Holidays
+- Fix End time before start time
+- Delete only works on month view
+- Move Add Event button / Remove whitespace above March 2025
