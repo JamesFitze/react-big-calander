@@ -3,11 +3,14 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay, addHours } from "date-fns";
 import enUS from "date-fns/locale/en-US";
+import Holidays from "date-holidays";
 import Modal from "react-modal";
 import "./App.css";
 
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
+
+
 
 function App() {
   const [myEvents, setMyEvents] = useState(() => {
@@ -21,6 +24,8 @@ function App() {
     }
     return [];
   });  
+
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [eventTitle, setEventTitle] = useState("");
@@ -32,8 +37,20 @@ function App() {
   const [eventColor, setEventColor] = useState("#3174ad");
   
   useEffect(() => {
-    localStorage.setItem("events", JSON.stringify(myEvents));
-  }, [myEvents]);
+    const fetchHolidays = () => {
+      const hd = new Holidays("CA");
+      const holidays = hd.getHolidays(2025);
+      const holidayEvents = holidays.map((holiday) => ({
+        title: holiday.name,
+        start: new Date(holiday.date),
+        end: new Date(holiday.date),
+        color: "#FF5733",
+      }));
+      setMyEvents(holidayEvents);
+    };
+
+    fetchHolidays();
+  }, []);
 
   const handleSelectSlot = ({ start }) => {
     setSelectedDate(start);
@@ -44,6 +61,7 @@ function App() {
   };
 
   const handleSelectEvent = (event) => {
+    console.log("Selected Event:", event);
     setCurrentEvent(event);
     setEventTitle(event.title);
     setStartTime(format(event.start, "yyyy-MM-dd'T'HH:mm"));
@@ -60,14 +78,36 @@ function App() {
     setEventColor("#3174ad");
     setCurrentEvent(null);
   };
+  
+
+  const validateEventTimes = (startTime, endTime) => {
+    const now = new Date();
+  
+    if (new Date(startTime) < now) {
+      return "Start time cannot be in the past.";
+    }
+  
+    if (new Date(endTime) <= new Date(startTime)) {
+      return "End time must be after the start time.";
+    }
+  
+    return null; // No error
+  };
 
   const handleAddOrUpdateEvent = () => {
     if (eventTitle && startTime && endTime) {
+      // Validate the event times
+      const validationError = validateEventTimes(startTime, endTime);
+      if (validationError) {
+        alert(validationError);
+        return;
+      }
+  
       const newEvent = {
         title: eventTitle,
         start: new Date(startTime),
         end: new Date(endTime),
-        color: eventColor, 
+        color: eventColor,
       };
   
       if (currentEvent) {
@@ -83,20 +123,43 @@ function App() {
     } else {
       console.log("Error: Missing required fields.");
     }
-  };  
+  };
 
   const handleDeleteEvent = () => {
     if (currentEvent) {
-      const updatedEvents = myEvents.filter((event) => event !== currentEvent);
+      const updatedEvents = myEvents.filter((event) => {
+        return event.start !== currentEvent.start || event.title !== currentEvent.title;
+      });
       setMyEvents(updatedEvents);
       closeModal();
     }
   };
 
+  // Custom Toolbar component with Add Event button
+  const CustomToolbar = ({ onNavigate, label, onAddEvent, onView }) => {
+    return (
+      <div className="rbc-toolbar">
+        {/* Default toolbar elements */}
+        <div className="rbc-toolbar-left">
+        <button className="add-event-button" onClick={onAddEvent}>Add Event</button>
+        <button onClick={() => onNavigate("PREV")}>Prev</button>
+        <button onClick={() => onNavigate("NEXT")}>Next</button>
+        </div>
+        <span className="rbc-toolbar-label">{label}</span>
+        <div className="rbc-toolbar-right">
+        <button onClick={() => onView("month")}>Month</button>
+        <button onClick={() => onView("week")}>Week</button>
+        <button onClick={() => onView("day")}>Day</button>
+        <button onClick={() => onView("agenda")}>Agenda</button>
+
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="app-container">
-      <button className="add-event-button" onClick={() => setModalIsOpen(true)}>Add Event</button>
-
+      
       <Calendar
         localizer={localizer}
         events={myEvents}
@@ -108,7 +171,7 @@ function App() {
         onSelectEvent={handleSelectEvent}
         views={["month", "week", "day", "agenda"]}
         defaultView="month"
-        toolbar={true}
+        toolbar={CustomToolbar}
         date={currentDate}
         view={currentView}
         onNavigate={(newDate) => setCurrentDate(newDate)}
@@ -119,6 +182,17 @@ function App() {
             color: "white",
           },
         })}
+        formats={{
+          weekdayFormat: "eeee", // Full day name
+        }}
+        components={{
+          toolbar: (props) => (
+            <CustomToolbar
+              {...props}
+              onAddEvent={() => setModalIsOpen(true)} // Trigger modal on "Add Event" button click
+            />
+          ),
+        }}
       />
 
       <Modal isOpen={modalIsOpen} onRequestClose={closeModal} contentLabel="Add or Edit Event" ariaHideApp={false}>

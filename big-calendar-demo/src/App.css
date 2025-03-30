@@ -87,6 +87,17 @@ p, button, input {
   font-weight: bold;
 }
 
+.rbc-toolbar-left {
+  display: flex;
+  gap: 10px;
+}
+
+.rbc-toolbar-right {
+  display: flex;
+  gap: 10px;
+}
+
+
 .color-picker {
   width: 100%;
   padding: 5px;
